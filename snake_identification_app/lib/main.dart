@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:snake_identification_app/screens/details_screen.dart';
+import './color_scheme.dart';
 import './firebase_options.dart';
 import './screens/image_capture_screen.dart';
+import './screens/add_details_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -13,7 +14,9 @@ void main() async {
 }
 
 class MyApp extends StatefulWidget {
-  const MyApp({super.key});
+  const MyApp({
+    super.key,
+  });
 
   @override
   State<MyApp> createState() => _MyAppState();
@@ -24,7 +27,7 @@ class _MyAppState extends State<MyApp> {
 
   final _pageOptions = <Widget>[
     const ImageCaptureScreen(),
-    const DetailsScreen(),
+    const AddDetailsScreen(),
   ];
 
   @override
@@ -33,14 +36,19 @@ class _MyAppState extends State<MyApp> {
       title: 'Snake Identifier',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primarySwatch: Colors.blueGrey,
+        colorScheme: lightColorScheme,
+        bottomNavigationBarTheme: BottomNavigationBarThemeData(
+          backgroundColor: lightColorScheme.primaryContainer,
+        ),
+        appBarTheme: AppBarTheme(
+          backgroundColor: lightColorScheme.background,
+          foregroundColor: Colors.black,
+        ),
       ),
       home: Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: lightColorScheme.background,
         appBar: AppBar(
           title: const Text('Snake Identifier'),
-          backgroundColor: Colors.white,
-          foregroundColor: Colors.black,
           elevation: 0,
         ),
         bottomNavigationBar: BottomNavigationBar(
@@ -54,11 +62,8 @@ class _MyAppState extends State<MyApp> {
               label: 'Add Details',
             )
           ],
-          selectedItemColor: Colors.black,
-          unselectedItemColor: Colors.black38,
           currentIndex: selectedPage,
-          backgroundColor: Colors.white,
-          elevation: 10.0,
+          elevation: 5.0,
           onTap: (index) {
             setState(() {
               selectedPage = index;

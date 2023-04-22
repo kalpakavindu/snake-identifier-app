@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:snake_identification_app/color_scheme.dart';
 import '../widgets/reusable_text_button.dart';
 
 class SelectPhotoOptionsScreen extends StatelessWidget {
@@ -26,7 +27,7 @@ class SelectPhotoOptionsScreen extends StatelessWidget {
               margin: const EdgeInsets.only(bottom: 20),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(2.5),
-                color: Colors.white,
+                color: lightColorScheme.background,
               ),
             ),
           ),
@@ -37,7 +38,8 @@ class SelectPhotoOptionsScreen extends StatelessWidget {
             ReusableTextButton(
               onTap: () => onTap(ImageSource.gallery),
               text: 'Browse Gallery',
-              backgroundColor: Colors.black54,
+              backgroundColor: lightColorScheme.primaryContainer,
+              textColor: lightColorScheme.onPrimaryContainer,
             ),
             const SizedBox(
               height: 10,
@@ -54,7 +56,8 @@ class SelectPhotoOptionsScreen extends StatelessWidget {
             ReusableTextButton(
               onTap: () => onTap(ImageSource.camera),
               text: 'Open Camera',
-              backgroundColor: Colors.black54,
+              backgroundColor: lightColorScheme.primary,
+              textColor: lightColorScheme.onPrimary,
             )
           ])
         ],

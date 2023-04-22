@@ -5,9 +5,12 @@ import 'package:logger/logger.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:path/path.dart';
+import '../color_scheme.dart';
+import '../models/snake_details_model.dart';
 
 import '../widgets/reusable_text_button.dart';
 import './select_photo_options_screen.dart';
+import 'details_screen.dart';
 
 class ImageCaptureScreen extends StatefulWidget {
   const ImageCaptureScreen({super.key});
@@ -20,7 +23,8 @@ class _ImageCaptureScreenState extends State<ImageCaptureScreen> {
   var logger = Logger();
   File? _imageFile;
   UploadTask? _uploadTask;
-  String? _downloadUrl;
+
+  SnakeDetails snakeDetails = SnakeDetails();
 
   Future _pickImage(ImageSource source) async {
     try {
@@ -55,18 +59,27 @@ class _ImageCaptureScreenState extends State<ImageCaptureScreen> {
         _uploadTask = imageRef.putFile(_imageFile!);
       });
 
-      await _uploadTask!.whenComplete(() => {});
-      _downloadUrl = await imageRef.getDownloadURL();
-      logger.i('Download URL: $_downloadUrl');
-
-      //TODO: After the image was upload.
-
-      setState(() {
-        _uploadTask = null;
+      await _uploadTask!.whenComplete(() {
+        setState(() {
+          snakeDetails.image = _imageFile;
+          _uploadTask = null;
+          _imageFile = null;
+        });
+        _showDetailsScreen(this.context);
       });
     } on PlatformException catch (e) {
       logger.e(e.message);
     }
+  }
+
+  void _showDetailsScreen(BuildContext context) {
+    snakeDetails.name = "Russell's viper";
+    snakeDetails.description =
+        "Russell’s viper (Daboia russelii) is a venomous snake in the family Viperidae native to the Indian subcontinent and one of the big four snakes in India. It has a deep yellow or pale brown skin covered with dark brown, elliptical spots surrounded with black rings. The belly is mostly white and usually covered with irregular dark markings. It has a flat triangular head, two fangs, medium-sized eyes with the vertical pupil. Russell’s vipers are solitary terrestrial creatures and primarily nocturnal foragers3. However, during cool weather, they become more active during the day.\n\nRussell’s vipers are ovoviviparous which means that females give birth to live young. Mating usually occurs early in the year, although pregnant females may be found at any time. The gestation period lasts more than 6 months.";
+
+    Navigator.push(context, MaterialPageRoute(builder: (context) {
+      return DetailsScreen(details: snakeDetails);
+    }));
   }
 
   void _showSelectPhotoOptions(BuildContext context) {
@@ -96,46 +109,45 @@ class _ImageCaptureScreenState extends State<ImageCaptureScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Center(
-          child: Container(
-            margin: const EdgeInsets.symmetric(vertical: 20.0),
-            width: 300.0,
-            height: 200.0,
-            decoration: BoxDecoration(
-              shape: BoxShape.rectangle,
-              color: Colors.grey.shade200,
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Center(
-              child: _imageFile == null
-                  ? const Text(
-                      'No image selected',
-                      style: TextStyle(
-                        fontSize: 20,
-                        color: Colors.black38,
+    return Container(
+      width: MediaQuery.of(context).size.width,
+      height: MediaQuery.of(context).size.height,
+      padding: const EdgeInsets.all(20.0),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Center(
+            child: Container(
+              margin: const EdgeInsets.symmetric(vertical: 20.0),
+              width: 300.0,
+              height: 200.0,
+              decoration: BoxDecoration(
+                shape: BoxShape.rectangle,
+                color: lightColorScheme.surfaceVariant,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Center(
+                child: _imageFile == null
+                    ? Text(
+                        'No image selected',
+                        style: TextStyle(
+                          fontSize: 20,
+                          color: lightColorScheme.onSurfaceVariant,
+                        ),
+                      )
+                    : Image(
+                        image: FileImage(_imageFile as File),
+                        height: 200.0,
+                        width: 300.0,
+                        fit: BoxFit.contain,
                       ),
-                    )
-                  : Image(
-                      image: FileImage(_imageFile as File),
-                      height: 200.0,
-                      width: 300.0,
-                      fit: BoxFit.contain,
-                    ),
+              ),
             ),
           ),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(
-            bottom: 40,
-            left: 30.0,
-            right: 30.0,
-          ),
-          child: _imageFile == null
+          _imageFile == null
               ? ReusableTextButton(
-                  backgroundColor: Colors.black,
+                  textColor: lightColorScheme.onPrimary,
+                  backgroundColor: lightColorScheme.primary,
                   text: 'Add an Image',
                   onTap: () => _showSelectPhotoOptions(context),
                 )
@@ -143,27 +155,32 @@ class _ImageCaptureScreenState extends State<ImageCaptureScreen> {
                   children: [
                     _uploadTask == null
                         ? ReusableTextButton(
-                            backgroundColor: Colors.black38,
+                            textColor: lightColorScheme.onPrimaryContainer,
                             text: 'Not this image',
                             onTap: _rejectImage,
+                            backgroundColor: lightColorScheme.primaryContainer,
                           )
                         : const Center(
-                            child: Text('Uploading...'),
+                            child: Text(
+                              'Uploading...',
+                              style: TextStyle(fontSize: 20.0),
+                            ),
                           ),
                     const SizedBox(
                       height: 20,
                     ),
                     _uploadTask == null
                         ? ReusableTextButton(
-                            backgroundColor: Colors.black,
+                            textColor: lightColorScheme.onPrimary,
+                            backgroundColor: lightColorScheme.primary,
                             text: 'Next',
                             onTap: _uploadImage,
                           )
                         : buildProgress(),
                   ],
                 ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -179,10 +196,17 @@ class _ImageCaptureScreenState extends State<ImageCaptureScreen> {
               child: Stack(
                 fit: StackFit.expand,
                 children: [
-                  LinearProgressIndicator(
-                      value: progress,
-                      backgroundColor: Colors.grey,
-                      color: Colors.green),
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width,
+                    child: ClipRRect(
+                      borderRadius: const BorderRadius.all(Radius.circular(10)),
+                      child: LinearProgressIndicator(
+                        value: progress,
+                        backgroundColor: Colors.blue.shade100,
+                        color: Colors.blue.shade700,
+                      ),
+                    ),
+                  ),
                   Center(
                       child: Text(
                     '${(100 * progress).roundToDouble()}%',
