@@ -1,4 +1,0 @@
-#Sat Apr 22 18:37:21 IST 2023
-base.0=D\:\\Devel\\snake-identification-app\\snake_identification_app\\build\\app\\intermediates\\dex\\debug\\mergeDexDebug\\classes.dex
-path.0=classes.dex
-renamed.0=classes.dex
