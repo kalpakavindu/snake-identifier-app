@@ -1,4 +1,4 @@
-const String backendBaseUri = 'http://192.168.1.100:5000';
+const String backendBaseUri = 'http://3.26.115.100:5000';
 const String imageEndpoint = '/predictImage';
 const String dataEndpoint = '/predictText';
 

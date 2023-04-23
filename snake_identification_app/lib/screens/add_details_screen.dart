@@ -1,10 +1,8 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:snake_identification_app/color_scheme.dart';
-import 'package:snake_identification_app/screens/details_screen.dart';
+import '../color_scheme.dart';
+import '../screens/details_screen.dart';
 import '../widgets/reusable_text_button.dart';
 import '../widgets/reusable_dropdown_field.dart';
-import '../models/snake_details_model.dart';
 import '../constants.dart';
 
 class AddDetailsScreen extends StatefulWidget {
@@ -21,20 +19,18 @@ class _AddDetailsScreenState extends State<AddDetailsScreen> {
   String? _selectedScalesPatternValue;
   String? _selectedHeadPatternValue;
   String? _selectedTimeValue;
-
-  SnakeDetails snakeDetails = SnakeDetails();
-
   final _formKey = GlobalKey<FormState>();
 
-  void _handleSubmit() async {
+  void _handleSubmit() {
     if (_formKey.currentState!.validate()) {
-      snakeDetails.length = _selectedLengthValue!;
-      snakeDetails.color = _selectedColorValue!;
-      snakeDetails.location = _selectedLocationValue!;
-      snakeDetails.headPattern = _selectedHeadPatternValue ?? 'none';
-      snakeDetails.scalesPattern = _selectedScalesPatternValue ?? 'none';
-      snakeDetails.time = _selectedTimeValue ?? 'none';
-      snakeDetails.image = null;
+      final data = <String, String>{
+        "length": _selectedLengthValue!,
+        "color": _selectedColorValue!,
+        "location": _selectedLocationValue!,
+        "head_pattern": _selectedHeadPatternValue ?? 'none',
+        "scales_pattern": _selectedScalesPatternValue ?? 'none',
+        "time": _selectedTimeValue ?? 'none',
+      };
 
       setState(() {
         _selectedColorValue = null;
@@ -45,19 +41,17 @@ class _AddDetailsScreenState extends State<AddDetailsScreen> {
         _selectedTimeValue = null;
       });
 
-      final resData = await snakeDetails.predictedData();
-
-      _navigateDetailsScreen(resData, null);
-    }
-  }
-
-  void _navigateDetailsScreen(Map<String, dynamic> details, File? image) {
-    Navigator.push(context, MaterialPageRoute(builder: (context) {
-      return DetailsScreen(
-        details: details,
-        image: image,
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) {
+            return DetailsScreen(
+              details: data,
+            );
+          },
+        ),
       );
-    }));
+    }
   }
 
   @override

@@ -5,8 +5,9 @@ import 'package:logger/logger.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:path/path.dart';
+import 'package:uuid/uuid.dart';
+
 import '../color_scheme.dart';
-import '../models/snake_details_model.dart';
 import '../widgets/reusable_text_button.dart';
 import './select_photo_options_screen.dart';
 import './details_screen.dart';
@@ -22,8 +23,6 @@ class _ImageCaptureScreenState extends State<ImageCaptureScreen> {
   var logger = Logger();
   File? _imageFile;
   UploadTask? _uploadTask;
-
-  SnakeDetails snakeDetails = SnakeDetails();
 
   Future _pickImage(ImageSource source) async {
     try {
@@ -48,8 +47,9 @@ class _ImageCaptureScreenState extends State<ImageCaptureScreen> {
   void _uploadImage() async {
     try {
       if (_imageFile == null) return;
-
-      String fileName = basename(_imageFile!.path);
+      var uuid = const Uuid();
+      final String ext = extension(_imageFile!.path);
+      String fileName = '${uuid.v4()}$ext';
       // create the reference
       Reference imageRef =
           FirebaseStorage.instance.ref().child('input').child('/$fileName');
@@ -58,23 +58,25 @@ class _ImageCaptureScreenState extends State<ImageCaptureScreen> {
         _uploadTask = imageRef.putFile(_imageFile!);
       });
 
-      await _uploadTask!.whenComplete(() async {
-        snakeDetails.image = _imageFile;
-        snakeDetails.color = null;
-        snakeDetails.headPattern = null;
-        snakeDetails.length = null;
-        snakeDetails.location = null;
-        snakeDetails.scalesPattern = null;
-        snakeDetails.time = null;
+      await _uploadTask!.whenComplete(() {
+        final File image = _imageFile!;
 
         setState(() {
           _imageFile = null;
           _uploadTask = null;
         });
 
-        final resData = await snakeDetails.predictedData();
-
-        _navigateDetailsScreen(resData, snakeDetails.image);
+        Navigator.push(
+          this.context,
+          MaterialPageRoute(
+            builder: (context) {
+              return DetailsScreen(
+                image: image,
+                fileName: fileName,
+              );
+            },
+          ),
+        );
       });
     } on PlatformException catch (e) {
       logger.e(e.message);
@@ -106,15 +108,6 @@ class _ImageCaptureScreenState extends State<ImageCaptureScreen> {
     );
   }
 
-  void _navigateDetailsScreen(Map<String, dynamic> details, File? image) {
-    Navigator.push(this.context, MaterialPageRoute(builder: (context) {
-      return DetailsScreen(
-        details: details,
-        image: image,
-      );
-    }));
-  }
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -139,7 +132,6 @@ class _ImageCaptureScreenState extends State<ImageCaptureScreen> {
                     ? Text(
                         'No image selected',
                         style: TextStyle(
-                          fontSize: 20,
                           color: lightColorScheme.onSurfaceVariant,
                         ),
                       )

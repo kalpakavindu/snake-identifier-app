@@ -4,6 +4,7 @@ import './color_scheme.dart';
 import './firebase_options.dart';
 import './screens/image_capture_screen.dart';
 import './screens/add_details_screen.dart';
+import './screens/landing_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,11 +25,19 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   int selectedPage = 0;
+  bool showLandingPage = true;
 
   final _pageOptions = <Widget>[
     const ImageCaptureScreen(),
     const AddDetailsScreen(),
   ];
+
+  void _startApp(int startupPage) {
+    setState(() {
+      showLandingPage = false;
+      selectedPage = startupPage;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,33 +54,42 @@ class _MyAppState extends State<MyApp> {
           foregroundColor: Colors.black,
         ),
       ),
-      home: Scaffold(
-        backgroundColor: lightColorScheme.background,
-        appBar: AppBar(
-          title: const Text('Snake Identifier'),
-          elevation: 0,
-        ),
-        bottomNavigationBar: BottomNavigationBar(
-          items: const [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.image_search_rounded, size: 30),
-              label: 'Pick Image',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.details_rounded),
-              label: 'Add Details',
+      home: showLandingPage
+          ? LandingScreen(
+              onSelectDetailsBtn: () {
+                _startApp(1);
+              },
+              onSelectImageBtn: () {
+                _startApp(0);
+              },
             )
-          ],
-          currentIndex: selectedPage,
-          elevation: 5.0,
-          onTap: (index) {
-            setState(() {
-              selectedPage = index;
-            });
-          },
-        ),
-        body: _pageOptions[selectedPage],
-      ),
+          : Scaffold(
+              backgroundColor: lightColorScheme.background,
+              appBar: AppBar(
+                title: const Text('Snake Identifier'),
+                elevation: 0,
+              ),
+              bottomNavigationBar: BottomNavigationBar(
+                items: const [
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.image_search_rounded, size: 30),
+                    label: 'Pick Image',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.details_rounded),
+                    label: 'Add Details',
+                  )
+                ],
+                currentIndex: selectedPage,
+                elevation: 5.0,
+                onTap: (index) {
+                  setState(() {
+                    selectedPage = index;
+                  });
+                },
+              ),
+              body: _pageOptions[selectedPage],
+            ),
     );
   }
 }

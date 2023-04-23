@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
-import 'package:path/path.dart';
 import '../constants.dart';
 
 class SnakeDetails {
@@ -12,7 +11,8 @@ class SnakeDetails {
   late String? headPattern;
   late String? time;
   late String? location;
-  final headers = <String, String>{
+  late String? fileName;
+  final _headers = <String, String>{
     'Accept': '*/*',
     'Content-Type': 'application/json; charset=UTF-8',
   };
@@ -20,9 +20,9 @@ class SnakeDetails {
   Future<Map<String, dynamic>> predictedData() async {
     if (image != null) {
       final uri = Uri.parse('$backendBaseUri/predictImage');
-      final data = jsonEncode(<String, String>{"name": basename(image!.path)});
+      final data = jsonEncode(<String, String>{"name": fileName!});
 
-      final response = await http.post(uri, headers: headers, body: data);
+      final response = await http.post(uri, headers: _headers, body: data);
       return {"status": response.statusCode, "body": jsonDecode(response.body)};
     }
 
@@ -36,7 +36,7 @@ class SnakeDetails {
       'snake_time': time!,
     });
 
-    final response = await http.post(uri, headers: headers, body: data);
+    final response = await http.post(uri, headers: _headers, body: data);
     return {"status": response.statusCode, "body": jsonDecode(response.body)};
   }
 }
