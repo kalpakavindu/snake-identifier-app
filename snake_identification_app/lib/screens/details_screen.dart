@@ -2,15 +2,16 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import '../color_scheme.dart';
-import '../models/snake_details_model.dart';
 import '../widgets/reusable_data_box.dart';
 
 class DetailsScreen extends StatefulWidget {
-  final SnakeDetails details;
+  final Map<String, dynamic> details;
+  final File? image;
 
   const DetailsScreen({
     super.key,
     required this.details,
+    this.image,
   });
 
   @override
@@ -47,8 +48,8 @@ class _DetailsScreenState extends State<DetailsScreen> {
                   borderRadius: BorderRadius.circular(10.0),
                   color: lightColorScheme.surfaceVariant,
                 ),
-                child: widget.details.image != null
-                    ? Image.file(widget.details.image as File)
+                child: widget.image != null
+                    ? Image.file(widget.image as File)
                     : Text(
                         'No image specified',
                         style: TextStyle(
@@ -60,7 +61,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
                 height: 30.0,
               ),
               ReusableDataBox(
-                text: widget.details.name as String,
+                text: widget.details['body']['name'],
                 backgroundColor: lightColorScheme.onSecondary,
                 textStyle: const TextStyle(
                   fontSize: 22.0,
@@ -71,7 +72,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
                 height: 30.0,
               ),
               ReusableDataBox(
-                  text: widget.details.description as String,
+                  text: widget.details['body']['desc'],
                   backgroundColor: lightColorScheme.onSecondary,
                   textStyle: const TextStyle(
                     fontSize: 15.0,

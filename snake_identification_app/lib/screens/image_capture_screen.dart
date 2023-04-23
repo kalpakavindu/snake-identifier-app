@@ -7,10 +7,9 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:path/path.dart';
 import '../color_scheme.dart';
 import '../models/snake_details_model.dart';
-
 import '../widgets/reusable_text_button.dart';
 import './select_photo_options_screen.dart';
-import 'details_screen.dart';
+import './details_screen.dart';
 
 class ImageCaptureScreen extends StatefulWidget {
   const ImageCaptureScreen({super.key});
@@ -53,33 +52,33 @@ class _ImageCaptureScreenState extends State<ImageCaptureScreen> {
       String fileName = basename(_imageFile!.path);
       // create the reference
       Reference imageRef =
-          FirebaseStorage.instance.ref().child('images').child('/$fileName');
+          FirebaseStorage.instance.ref().child('input').child('/$fileName');
 
       setState(() {
         _uploadTask = imageRef.putFile(_imageFile!);
       });
 
-      await _uploadTask!.whenComplete(() {
+      await _uploadTask!.whenComplete(() async {
+        snakeDetails.image = _imageFile;
+        snakeDetails.color = null;
+        snakeDetails.headPattern = null;
+        snakeDetails.length = null;
+        snakeDetails.location = null;
+        snakeDetails.scalesPattern = null;
+        snakeDetails.time = null;
+
         setState(() {
-          snakeDetails.image = _imageFile;
-          _uploadTask = null;
           _imageFile = null;
+          _uploadTask = null;
         });
-        _showDetailsScreen(this.context);
+
+        final resData = await snakeDetails.predictedData();
+
+        _navigateDetailsScreen(resData, snakeDetails.image);
       });
     } on PlatformException catch (e) {
       logger.e(e.message);
     }
-  }
-
-  void _showDetailsScreen(BuildContext context) {
-    snakeDetails.name = "Russell's viper";
-    snakeDetails.description =
-        "Russell’s viper (Daboia russelii) is a venomous snake in the family Viperidae native to the Indian subcontinent and one of the big four snakes in India. It has a deep yellow or pale brown skin covered with dark brown, elliptical spots surrounded with black rings. The belly is mostly white and usually covered with irregular dark markings. It has a flat triangular head, two fangs, medium-sized eyes with the vertical pupil. Russell’s vipers are solitary terrestrial creatures and primarily nocturnal foragers3. However, during cool weather, they become more active during the day.\n\nRussell’s vipers are ovoviviparous which means that females give birth to live young. Mating usually occurs early in the year, although pregnant females may be found at any time. The gestation period lasts more than 6 months.";
-
-    Navigator.push(context, MaterialPageRoute(builder: (context) {
-      return DetailsScreen(details: snakeDetails);
-    }));
   }
 
   void _showSelectPhotoOptions(BuildContext context) {
@@ -105,6 +104,15 @@ class _ImageCaptureScreenState extends State<ImageCaptureScreen> {
             );
           }),
     );
+  }
+
+  void _navigateDetailsScreen(Map<String, dynamic> details, File? image) {
+    Navigator.push(this.context, MaterialPageRoute(builder: (context) {
+      return DetailsScreen(
+        details: details,
+        image: image,
+      );
+    }));
   }
 
   @override

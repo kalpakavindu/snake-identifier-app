@@ -1,9 +1,11 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:snake_identification_app/color_scheme.dart';
 import 'package:snake_identification_app/screens/details_screen.dart';
 import '../widgets/reusable_text_button.dart';
 import '../widgets/reusable_dropdown_field.dart';
 import '../models/snake_details_model.dart';
+import '../constants.dart';
 
 class AddDetailsScreen extends StatefulWidget {
   const AddDetailsScreen({super.key});
@@ -13,41 +15,6 @@ class AddDetailsScreen extends StatefulWidget {
 }
 
 class _AddDetailsScreenState extends State<AddDetailsScreen> {
-  final _lengthList = [
-    {"name": "Short", "value": "short"},
-    {"name": "Long", "value": "long"},
-  ];
-  final _colorList = [
-    {"name": "Red", "value": "red"},
-    {"name": "Green", "value": "green"},
-    {"name": "Black", "value": "black"},
-    {"name": "White", "value": "white"},
-    {"name": "Yellow", "value": "yellow"},
-    {"name": "Brown", "value": "brown"},
-  ];
-  final _locationList = [
-    {"name": "Floor", "value": "floor"},
-    {"name": "Mud", "value": "mud"},
-    {"name": "Tree", "value": "tree"},
-    {"name": "Other", "value": "other"},
-  ];
-  final _scalesPatternList = [
-    {"name": "SPattern1", "value": "sp1"},
-    {"name": "SPattern2", "value": "sp2"},
-    {"name": "SPattern3", "value": "sp3"},
-  ];
-  final _headPatternList = [
-    {"name": "HPattern1", "value": "hp1"},
-    {"name": "HPattern2", "value": "hp2"},
-    {"name": "HPattern3", "value": "hp3"},
-  ];
-  final _timeList = [
-    {"name": "Morning", "value": "morning"},
-    {"name": "Afternoon", "value": "afternoon"},
-    {"name": "Evening", "value": "evening"},
-    {"name": "Night", "value": "night"},
-  ];
-
   String? _selectedLengthValue;
   String? _selectedColorValue;
   String? _selectedLocationValue;
@@ -59,12 +26,14 @@ class _AddDetailsScreenState extends State<AddDetailsScreen> {
 
   final _formKey = GlobalKey<FormState>();
 
-  void _handleSubmit() {
+  void _handleSubmit() async {
     if (_formKey.currentState!.validate()) {
-      snakeDetails.name = "Russell's viper";
-      snakeDetails.description =
-          "Russell's viper (Daboia russelii) is a venomous snake found in Asia. The species is named for Patrick Russell, a Scottish herpetologist who first described many of India's snakes. In Bengali, this snake is called Chandroborha since it carries lenticular or more precisely lunar marks all over its body.";
-
+      snakeDetails.length = _selectedLengthValue!;
+      snakeDetails.color = _selectedColorValue!;
+      snakeDetails.location = _selectedLocationValue!;
+      snakeDetails.headPattern = _selectedHeadPatternValue ?? 'none';
+      snakeDetails.scalesPattern = _selectedScalesPatternValue ?? 'none';
+      snakeDetails.time = _selectedTimeValue ?? 'none';
       snakeDetails.image = null;
 
       setState(() {
@@ -76,10 +45,19 @@ class _AddDetailsScreenState extends State<AddDetailsScreen> {
         _selectedTimeValue = null;
       });
 
-      Navigator.push(context, MaterialPageRoute(builder: (context) {
-        return DetailsScreen(details: snakeDetails);
-      }));
+      final resData = await snakeDetails.predictedData();
+
+      _navigateDetailsScreen(resData, null);
     }
+  }
+
+  void _navigateDetailsScreen(Map<String, dynamic> details, File? image) {
+    Navigator.push(context, MaterialPageRoute(builder: (context) {
+      return DetailsScreen(
+        details: details,
+        image: image,
+      );
+    }));
   }
 
   @override
@@ -101,7 +79,7 @@ class _AddDetailsScreenState extends State<AddDetailsScreen> {
                   });
                 },
                 value: _selectedLengthValue,
-                items: _lengthList,
+                items: snakeLengthOptions,
                 label: 'Length of the snake',
                 validator: (val) {
                   if (val == null || val.isEmpty) {
@@ -120,7 +98,7 @@ class _AddDetailsScreenState extends State<AddDetailsScreen> {
                   });
                 },
                 value: _selectedColorValue,
-                items: _colorList,
+                items: snakeColorOptions,
                 label: 'Color of the snake',
                 validator: (val) {
                   if (val == null || val.isEmpty) {
@@ -139,7 +117,7 @@ class _AddDetailsScreenState extends State<AddDetailsScreen> {
                   });
                 },
                 value: _selectedLocationValue,
-                items: _locationList,
+                items: snakeLocationOptions,
                 label: 'Where did you see it ?',
                 validator: (val) {
                   if (val == null || val.isEmpty) {
@@ -158,7 +136,7 @@ class _AddDetailsScreenState extends State<AddDetailsScreen> {
                   });
                 },
                 value: _selectedScalesPatternValue,
-                items: _scalesPatternList,
+                items: snakeScalesPatternOptions,
                 label: 'Scales pattern of the snake',
               ),
               const SizedBox(
@@ -171,7 +149,7 @@ class _AddDetailsScreenState extends State<AddDetailsScreen> {
                   });
                 },
                 value: _selectedHeadPatternValue,
-                items: _headPatternList,
+                items: snakeHeadPatternOptions,
                 label: 'Head Pattern of the snake',
               ),
               const SizedBox(
@@ -184,7 +162,7 @@ class _AddDetailsScreenState extends State<AddDetailsScreen> {
                   });
                 },
                 value: _selectedTimeValue,
-                items: _timeList,
+                items: snakeTimeOptions,
                 label: 'At what time did you see it?',
               ),
               const SizedBox(
