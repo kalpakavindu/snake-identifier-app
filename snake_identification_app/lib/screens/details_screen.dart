@@ -156,7 +156,7 @@ class Details extends StatelessWidget {
                             title: 'Image Similarity',
                             width:
                                 MediaQuery.of(context).size.width / 2.0 - 25.0,
-                            text: "${data['body']['image_similarity']}%",
+                            text: data['body']['similarity'],
                             backgroundColor: lightColorScheme.onSecondary,
                             textStyle: const TextStyle(
                               fontSize: 60.0,
@@ -169,7 +169,7 @@ class Details extends StatelessWidget {
                         ),
                         IntrinsicHeight(
                           child: ReusableDataBox(
-                            text: data['body']['venomous_status'],
+                            text: data['body']['status'],
                             title: 'Venomous Status',
                             width:
                                 MediaQuery.of(context).size.width / 2.0 - 25.0,
@@ -186,7 +186,7 @@ class Details extends StatelessWidget {
                 : const SizedBox(),
             ReusableDataBox(
               addSeeMore: image == null ? false : true,
-              text: data['body']['desc'],
+              text: data['body']['des'],
               backgroundColor: lightColorScheme.onSecondary,
               textStyle: const TextStyle(
                 fontSize: 15.0,
