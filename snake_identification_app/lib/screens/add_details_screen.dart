@@ -76,7 +76,7 @@ class _AddDetailsScreenState extends State<AddDetailsScreen> {
                 items: snakeLengthOptions,
                 label: 'Length of the snake',
                 validator: (val) {
-                  if (val == null || val.isEmpty) {
+                  if (val == null) {
                     return 'This field is required!';
                   }
                   return null;
@@ -95,7 +95,7 @@ class _AddDetailsScreenState extends State<AddDetailsScreen> {
                 items: snakeColorOptions,
                 label: 'Color of the snake',
                 validator: (val) {
-                  if (val == null || val.isEmpty) {
+                  if (val == null) {
                     return 'This field is required!';
                   }
                   return null;
@@ -114,7 +114,7 @@ class _AddDetailsScreenState extends State<AddDetailsScreen> {
                 items: snakeLocationOptions,
                 label: 'Where did you see it ?',
                 validator: (val) {
-                  if (val == null || val.isEmpty) {
+                  if (val == null) {
                     return 'This field is required!';
                   }
                   return null;

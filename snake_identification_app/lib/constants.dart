@@ -1,39 +1,113 @@
-const String backendBaseUri = 'http://3.26.115.100:5000';
+import 'package:flutter/material.dart';
+
+const String backendBaseUri = 'http://3.27.150.156:5000';
 const String imageEndpoint = '/predictImage';
 const String dataEndpoint = '/predictText';
 
-final List<Map<String, String>> snakeLengthOptions = [
-  {"name": "Short", "value": "short"},
-  {"name": "Long", "value": "long"},
+final snakeLengthOptions = <Map<String, dynamic>>[
+  {"child": const Text('Short'), "value": "short"},
+  {"child": const Text('Long'), "value": "long"},
 ];
 
-final List<Map<String, String>> snakeColorOptions = [
-  {"name": "Red", "value": "red"},
-  {"name": "Green", "value": "green"},
-  {"name": "Black", "value": "black"},
-  {"name": "White", "value": "white"},
-  {"name": "Yellow", "value": "yellow"},
-  {"name": "Brown", "value": "brown"},
+final snakeColorOptions = <Map<String, dynamic>>[
+  {"child": const Text('Red'), "value": "red"},
+  {"child": const Text('Green'), "value": "green"},
+  {"child": const Text('Black'), "value": "black"},
+  {"child": const Text('White'), "value": "white"},
+  {"child": const Text('Yellow'), "value": "yellow"},
+  {"child": const Text('Brown'), "value": "brown"},
 ];
-final List<Map<String, String>> snakeLocationOptions = [
-  {"name": "Floor", "value": "floor"},
-  {"name": "Mud", "value": "mud"},
-  {"name": "Tree", "value": "tree"},
-  {"name": "Other", "value": "other"},
+final snakeLocationOptions = <Map<String, dynamic>>[
+  {"child": const Text('Floor'), "value": "floor"},
+  {"child": const Text('Mud'), "value": "mud"},
+  {"child": const Text('Tree'), "value": "tree"},
+  {"child": const Text('Other'), "value": "other"},
 ];
-final List<Map<String, String>> snakeScalesPatternOptions = [
-  {"name": "SPattern1", "value": "sp1"},
-  {"name": "SPattern2", "value": "sp2"},
-  {"name": "SPattern3", "value": "sp3"},
+final snakeScalesPatternOptions = <Map<String, dynamic>>[
+  {
+    "child": const SizedBox(
+      width: 250.0,
+      height: 30.0,
+      child: Image(
+        image: AssetImage(
+          'assets/images/abstract_snake_purple_landing_screen.png',
+        ),
+        fit: BoxFit.fill,
+      ),
+    ),
+    "value": "sp1"
+  },
+  {
+    "child": const SizedBox(
+      width: 250.0,
+      height: 30.0,
+      child: Image(
+        image: AssetImage(
+          'assets/images/abstract_snake_purple_landing_screen.png',
+        ),
+        fit: BoxFit.fill,
+      ),
+    ),
+    "value": "sp2"
+  },
+  {
+    "child": const SizedBox(
+      width: 250.0,
+      height: 30.0,
+      child: Image(
+        image: AssetImage(
+          'assets/images/abstract_snake_purple_landing_screen.png',
+        ),
+        fit: BoxFit.fill,
+      ),
+    ),
+    "value": "sp3"
+  },
 ];
-final List<Map<String, String>> snakeHeadPatternOptions = [
-  {"name": "HPattern1", "value": "hp1"},
-  {"name": "HPattern2", "value": "hp2"},
-  {"name": "HPattern3", "value": "hp3"},
+final snakeHeadPatternOptions = <Map<String, dynamic>>[
+  {
+    "child": const SizedBox(
+      width: 250.0,
+      height: 30.0,
+      child: Image(
+        image: AssetImage(
+          'assets/images/abstract_snake_purple_landing_screen.png',
+        ),
+        fit: BoxFit.fill,
+      ),
+    ),
+    "value": "hp1"
+  },
+  {
+    "child": const SizedBox(
+      width: 250.0,
+      height: 30.0,
+      child: Image(
+        image: AssetImage(
+          'assets/images/abstract_snake_purple_landing_screen.png',
+        ),
+        fit: BoxFit.fill,
+      ),
+    ),
+    "value": "hp2"
+  },
+  {
+    "child": const SizedBox(
+      width: 250.0,
+      height: 30.0,
+      child: Image(
+        image: AssetImage(
+          'assets/images/abstract_snake_purple_landing_screen.png',
+        ),
+        fit: BoxFit.fill,
+      ),
+    ),
+    "value": "hp3"
+  },
 ];
-final List<Map<String, String>> snakeTimeOptions = [
-  {"name": "Morning", "value": "morning"},
-  {"name": "Afternoon", "value": "afternoon"},
-  {"name": "Evening", "value": "evening"},
-  {"name": "Night", "value": "night"},
+final snakeTimeOptions = <Map<String, dynamic>>[
+  {"child": const Text('Morning'), "value": "morning"},
+  {"child": const Text('Afternoon'), "value": "afternoon"},
+  {"child": const Text('Evening'), "value": "evening"},
+  {"child": const Text('Night'), "value": "night"},
 ];

@@ -1,3 +1,5 @@
+import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import '../models/snake_details_model.dart';
@@ -23,7 +25,7 @@ class DetailsScreen extends StatefulWidget {
 class _DetailsScreenState extends State<DetailsScreen> {
   SnakeDetails snakeDetails = SnakeDetails();
 
-  Future<Map<String, dynamic>> _fetchData() async {
+  Future _fetchData() async {
     if (widget.details != null) {
       snakeDetails.color = widget.details!['color'];
       snakeDetails.headPattern = widget.details!['head_pattern'];
@@ -38,8 +40,11 @@ class _DetailsScreenState extends State<DetailsScreen> {
       snakeDetails.fileName = widget.fileName;
       snakeDetails.image = widget.image;
     }
-
-    return snakeDetails.predictedData();
+    try {
+      return await snakeDetails.predictedData();
+    } catch (e) {
+      return e;
+    }
   }
 
   @override
@@ -53,15 +58,49 @@ class _DetailsScreenState extends State<DetailsScreen> {
       ),
       body: FutureBuilder(
         future: _fetchData(),
-        builder: (context, snapshot) {
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (snapshot.hasData) {
-            return Details(data: snapshot.data!, image: widget.image);
+            if (snapshot.data!['status'] != 200) {
+              return ErrorOccurred(
+                  error:
+                      "Request failed with status code ${snapshot.data!['status']}");
+            } else {
+              return Details(
+                  data: jsonDecode(snapshot.data!['body']),
+                  image: widget.image);
+            }
           } else if (snapshot.hasError) {
-            return const Text('An unexpected error occurred');
+            return ErrorOccurred(error: '${snapshot.error}');
           } else {
             return const PreLoader();
           }
         },
+      ),
+    );
+  }
+}
+
+class ErrorOccurred extends StatelessWidget {
+  final String error;
+  const ErrorOccurred({super.key, required this.error});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: MediaQuery.of(context).size.width,
+      height: MediaQuery.of(context).size.height,
+      padding: const EdgeInsets.symmetric(vertical: 100.0),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            error,
+            style: TextStyle(
+              color: lightColorScheme.outline,
+              fontSize: 20.0,
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -136,7 +175,7 @@ class Details extends StatelessWidget {
                   )
                 : const SizedBox(),
             ReusableDataBox(
-              text: data['body']['name'],
+              text: data['name'],
               backgroundColor: lightColorScheme.onSecondary,
               textStyle: const TextStyle(
                 fontSize: 22.0,
@@ -156,7 +195,7 @@ class Details extends StatelessWidget {
                             title: 'Image Similarity',
                             width:
                                 MediaQuery.of(context).size.width / 2.0 - 25.0,
-                            text: data['body']['similarity'],
+                            text: data['similarity'],
                             backgroundColor: lightColorScheme.onSecondary,
                             textStyle: const TextStyle(
                               fontSize: 60.0,
@@ -169,7 +208,7 @@ class Details extends StatelessWidget {
                         ),
                         IntrinsicHeight(
                           child: ReusableDataBox(
-                            text: data['body']['status'],
+                            text: data['status'],
                             title: 'Venomous Status',
                             width:
                                 MediaQuery.of(context).size.width / 2.0 - 25.0,
@@ -186,7 +225,7 @@ class Details extends StatelessWidget {
                 : const SizedBox(),
             ReusableDataBox(
               addSeeMore: image == null ? false : true,
-              text: data['body']['des'],
+              text: data['des'],
               backgroundColor: lightColorScheme.onSecondary,
               textStyle: const TextStyle(
                 fontSize: 15.0,

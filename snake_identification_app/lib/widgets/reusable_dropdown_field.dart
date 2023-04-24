@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import '../color_scheme.dart';
 
 class ReusableDropdownField extends StatefulWidget {
-  final void Function(Object) onUpdate;
+  final void Function(Object?) onUpdate;
   final String? value;
-  final List<Map<String, String>> items;
+  final List<Map<String, dynamic>> items;
   final String label;
-  final String? Function(String?)? validator;
+  final String? Function(Object?)? validator;
 
   const ReusableDropdownField({
     super.key,
@@ -37,16 +37,13 @@ class _ReusableDropdownFieldState extends State<ReusableDropdownField> {
           style: TextStyle(color: lightColorScheme.outline),
         ),
         onChanged: (val) {
-          widget.onUpdate(val!);
+          widget.onUpdate(val);
         },
         items: widget.items.map(
           (item) {
             return DropdownMenuItem(
               value: item['value']!,
-              child: Text(
-                item['name']!,
-                style: TextStyle(color: lightColorScheme.onBackground),
-              ),
+              child: item['child']!,
             );
           },
         ).toList(),
