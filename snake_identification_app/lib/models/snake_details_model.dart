@@ -12,6 +12,7 @@ class SnakeDetails {
   late String? time;
   late String? location;
   late String? fileName;
+  late String? place;
   final _headers = <String, String>{
     'Accept': '*/*',
     'Content-Type': 'application/json; charset=UTF-8',
@@ -34,6 +35,7 @@ class SnakeDetails {
       'scales_pattern': scalesPattern!,
       'head_pattern': headPattern!,
       'time': time!,
+      'found_place': place!,
     });
 
     final response = await http.post(uri, headers: _headers, body: data);

@@ -33,6 +33,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
       snakeDetails.location = widget.details!['location'];
       snakeDetails.scalesPattern = widget.details!['scales_pattern'];
       snakeDetails.time = widget.details!['time'];
+      snakeDetails.place = widget.details!['place'];
       snakeDetails.image = null;
     }
 

@@ -19,6 +19,7 @@ class _AddDetailsScreenState extends State<AddDetailsScreen> {
   String? _selectedScalesPatternValue;
   String? _selectedHeadPatternValue;
   String? _selectedTimeValue;
+  String? _selectedPlaceValue;
   final _formKey = GlobalKey<FormState>();
 
   void _handleSubmit() {
@@ -27,9 +28,10 @@ class _AddDetailsScreenState extends State<AddDetailsScreen> {
         "length": _selectedLengthValue!,
         "color": _selectedColorValue!,
         "location": _selectedLocationValue!,
-        "head_pattern": _selectedHeadPatternValue ?? 'none',
-        "scales_pattern": _selectedScalesPatternValue ?? 'none',
-        "time": _selectedTimeValue ?? 'none',
+        "head_pattern": _selectedHeadPatternValue!,
+        "scales_pattern": _selectedScalesPatternValue!,
+        "time": _selectedTimeValue!,
+        "place": _selectedPlaceValue!,
       };
 
       setState(() {
@@ -39,6 +41,7 @@ class _AddDetailsScreenState extends State<AddDetailsScreen> {
         _selectedLocationValue = null;
         _selectedScalesPatternValue = null;
         _selectedTimeValue = null;
+        _selectedPlaceValue = null;
       });
 
       Navigator.push(
@@ -107,12 +110,12 @@ class _AddDetailsScreenState extends State<AddDetailsScreen> {
               ReusableDropdownField(
                 onUpdate: (val) {
                   setState(() {
-                    _selectedLocationValue = val as String;
+                    _selectedPlaceValue = val as String;
                   });
                 },
-                value: _selectedLocationValue,
-                items: snakeLocationOptions,
-                label: 'Where did you see it ?',
+                value: _selectedPlaceValue,
+                items: snakeFoundPlaceOptions,
+                label: 'What kind of place ?',
                 validator: (val) {
                   if (val == null) {
                     return 'This field is required!';
@@ -132,6 +135,12 @@ class _AddDetailsScreenState extends State<AddDetailsScreen> {
                 value: _selectedScalesPatternValue,
                 items: snakeScalesPatternOptions,
                 label: 'Scales pattern of the snake',
+                validator: (val) {
+                  if (val == null) {
+                    return 'This field is required!';
+                  }
+                  return null;
+                },
               ),
               const SizedBox(
                 height: 20.0,
@@ -145,6 +154,12 @@ class _AddDetailsScreenState extends State<AddDetailsScreen> {
                 value: _selectedHeadPatternValue,
                 items: snakeHeadPatternOptions,
                 label: 'Head Pattern of the snake',
+                validator: (val) {
+                  if (val == null) {
+                    return 'This field is required!';
+                  }
+                  return null;
+                },
               ),
               const SizedBox(
                 height: 20.0,
@@ -157,7 +172,32 @@ class _AddDetailsScreenState extends State<AddDetailsScreen> {
                 },
                 value: _selectedTimeValue,
                 items: snakeTimeOptions,
-                label: 'At what time did you see it?',
+                label: 'At what time did you see it ?',
+                validator: (val) {
+                  if (val == null) {
+                    return 'This field is required!';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(
+                height: 20.0,
+              ),
+              ReusableDropdownField(
+                onUpdate: (val) {
+                  setState(() {
+                    _selectedLocationValue = val as String;
+                  });
+                },
+                value: _selectedLocationValue,
+                items: snakeLocationOptions,
+                label: 'At what province did you found it ?',
+                validator: (val) {
+                  if (val == null) {
+                    return 'This field is required!';
+                  }
+                  return null;
+                },
               ),
               const SizedBox(
                 height: 30.0,
